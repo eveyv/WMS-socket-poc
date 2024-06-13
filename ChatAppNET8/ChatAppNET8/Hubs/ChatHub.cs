@@ -13,7 +13,14 @@ namespace ChatAppNET8.Hubs
 
         private string ProcessMessage(string user, string message)
         {
-            return $"{message.ToUpper()}";
+            if (!int.TryParse(message, out _))
+            {
+                return $"{message.ToUpper()}";
+            }
+            else
+            {
+                return message+" is an integer";
+            }
         }
     }
 }
