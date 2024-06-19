@@ -1,4 +1,5 @@
 .vs/
-./ChatAppNET8/ChatAppNET8/bin
-./ChatAppNET8/ChatAppNET8.Client/obj
-./ChatAppNET8/ChatAppNET8/obj/Debug
+/ChatAppNET8/ChatAppNET8/bin
+/ChatAppNET8/ChatAppNET8/obj
+/ChatAppNET8/ChatAppNET8.Client/bin
+/ChatAppNET8/ChatAppNET8.Client/obj
