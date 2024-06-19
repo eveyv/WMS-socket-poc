@@ -30,6 +30,8 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<PrintHub>("/printhub");
+
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()

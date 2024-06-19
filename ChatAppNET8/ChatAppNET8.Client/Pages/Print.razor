@@ -1,0 +1,47 @@
+﻿@page "/print"
+@inject NavigationManager NavigationManager
+@inject SignalRService SignalRService
+
+<h1>Printing Example</h1>
+
+<button @onclick="PrintDocument">Print Document</button>
+
+<p>@printStatus</p>
+
+@code {
+    private string printStatus = "";
+
+    private async Task PrintDocument()
+    {
+        try
+        {
+            // change to real IP
+            string printerIp = "10.5.7.51";
+            string documentPath = "C:\Users\yeawe\Desktop\test.txt"; // this probably needs to be be in the solution directory. test in AM.
+
+            await SignalRService.PrintDocumentAsync(printerIp, documentPath);
+
+            printStatus = "Printing...";
+        }
+        catch (Exception ex)
+        {
+            printStatus = $"Error: {ex.Message}";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SignalRService.StartPrintHubConnectionAsync("https://localhost:5001/printhub"); //url declared -
+
+        SignalRService.OnPrintCompleted += (message) =>
+        {
+            printStatus = message;
+            StateHasChanged();
+        };
+    }
+
+    public void Dispose()
+    {
+        SignalRService.StopConnectionAsync();
+    }
+}
