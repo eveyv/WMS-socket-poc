@@ -4,3 +4,11 @@ ChatAppNET8/ChatAppNET8/obj/
 ChatAppNET8.Client/bin/
 ChatAppNET8.Client/obj/
 ChatAppNET8/ChatAppNET8.Client/obj/Debug/
+ChatAppNET8.Client/bin/Debug/net8.0/ChatAppNET8.Client.dll
+ChatAppNET8.Client/bin/Debug/net8.0/ChatAppNET8.Client.pdb
+ChatAppNET8.Client/bin/Debug/net8.0/wwwroot/_framework/ChatAppNET8.Client.pdb
+ChatAppNET8.Client/bin/Debug/net8.0/wwwroot/_framework/ChatAppNET8.Client.pdb.gz
+ChatAppNET8.Client/bin/Debug/net8.0/wwwroot/_framework/ChatAppNET8.Client.wasm
+ChatAppNET8.Client/bin/Debug/net8.0/wwwroot/_framework/ChatAppNET8.Client.wasm.gz
+ChatAppNET8.Client/bin/Debug/net8.0/wwwroot/_framework/blazor.boot.json
+ChatAppNET8.Client/bin/Debug/net8.0/wwwroot/_framework/blazor.boot.json.gz
