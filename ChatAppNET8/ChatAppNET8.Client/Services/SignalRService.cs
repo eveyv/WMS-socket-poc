@@ -1,10 +1,9 @@
-﻿namespace ChatAppNET8.Client.Services
-{
-    // Services/SignalRService.cs
-    using Microsoft.AspNetCore.SignalR.Client;
-    using System;
-    using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using System;
+using System.Threading.Tasks;
 
+namespace ChatAppNET8.Client.Services
+{
     public class SignalRService
     {
         private HubConnection _chatHubConnection;

@@ -1,6 +1,8 @@
 ﻿@page "/print"
 @inject NavigationManager NavigationManager
-@inject SignalRService SignalRService
+@inject ChatAppNET8.Client.Services.SignalRService SignalRService
+@using ChatAppNET8.Client.Services
+@using static ChatAppNET8.Client.Services.SignalRService
 
 <h1>Printing Example</h1>
 
@@ -16,8 +18,8 @@
         try
         {
             // change to real IP
-            string printerIp = "10.5.7.51";
-            string documentPath = "C:\Users\yeawe\Desktop\test.txt"; // this probably needs to be be in the solution directory. test in AM.
+            string printerIp = "10.5.5.53";
+            string documentPath = "\\test\test.txt"; // this probably needs to be be in the solution directory. test in AM.
 
             await SignalRService.PrintDocumentAsync(printerIp, documentPath);
 
@@ -31,7 +33,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await SignalRService.StartPrintHubConnectionAsync("https://localhost:5001/printhub"); //url declared -
+        await SignalRService.StartPrintHubConnectionAsync("http://localhost:5275/printhub"); //url declared -
 
         SignalRService.OnPrintCompleted += (message) =>
         {

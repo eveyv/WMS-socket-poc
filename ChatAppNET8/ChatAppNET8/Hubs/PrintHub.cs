@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using ChatAppNET8.Services;
+using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
 namespace ChatAppNET8.Hubs
