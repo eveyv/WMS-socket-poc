@@ -15,6 +15,8 @@ namespace ChatAppNET8.Services
                 throw new FileNotFoundException($"The document {documentPath} does not exist.");
             }
 
+            Console.WriteLine(documentPath);
+
             // Read the file content
             byte[] fileBytes = File.ReadAllBytes(documentPath);
 
