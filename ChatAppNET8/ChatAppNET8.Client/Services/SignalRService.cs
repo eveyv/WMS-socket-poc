@@ -11,6 +11,9 @@ namespace ChatAppNET8.Client.Services
 
         public event Action<string, string> OnReceiveMessage;
         public event Action<string> OnPrintCompleted;
+        public string? SocketConnectionId { get; private set; }
+        public string? PrintConnectionId { get; private set; }
+
 
         public async Task StartChatHubConnectionAsync(string chatHubUrl)
         {
@@ -24,6 +27,8 @@ namespace ChatAppNET8.Client.Services
             });
 
             await _chatHubConnection.StartAsync();
+            SocketConnectionId = _chatHubConnection.ConnectionId; // grab connectionid after process is started
+            Console.WriteLine($"Connected to SignalR {SocketConnectionId}"); // check id
         }
 
         public async Task SendMessageAsync(string user, string message)
@@ -47,33 +52,32 @@ namespace ChatAppNET8.Client.Services
             _printHubConnection.On<string>("PrintCompleted", (message) =>
             {
                 OnPrintCompleted?.Invoke(message);
+                Console.WriteLine($"Received PrintCompleted message: {message}");
             });
 
             await _printHubConnection.StartAsync();
+            PrintConnectionId = _printHubConnection.ConnectionId;
+            Console.WriteLine($"Connected to PrintHub {PrintConnectionId}");
         }
 
         public async Task PrintDocumentAsync(string printerIp, string documentPath)
         {
-            if (_printHubConnection.State == HubConnectionState.Connected)
+            if (_printHubConnection == null || _printHubConnection.State != HubConnectionState.Connected)
             {
-                await _printHubConnection.InvokeAsync("PrintDocument", printerIp, documentPath);
+                throw new InvalidOperationException("Hub connection is not started.");
             }
-            else
-            {
-                throw new InvalidOperationException("Print SignalR connection is not established.");
-            }
+
+            await _printHubConnection.InvokeAsync("PrintDocument", printerIp, documentPath);
+            Console.WriteLine($"PrintDocument invoked with Printer IP: {printerIp}, Document Path: {documentPath}");
         }
 
         public async Task StopConnectionAsync()
         {
-            if (_chatHubConnection != null)
-            {
-                await _chatHubConnection.DisposeAsync();
-            }
-
             if (_printHubConnection != null)
             {
+                await _printHubConnection.StopAsync();
                 await _printHubConnection.DisposeAsync();
+                Console.WriteLine("Disconnected from PrintHub");
             }
         }
     }
