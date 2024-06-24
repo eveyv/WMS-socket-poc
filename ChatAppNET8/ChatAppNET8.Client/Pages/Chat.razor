@@ -1,8 +1,9 @@
 ﻿@page "/chat"
 @inject NavigationManager NavigationManager
+@inject SignalRService SignalRService
 @rendermode InteractiveWebAssembly
 @using Microsoft.AspNetCore.SignalR.Client
-@using ChatAppNET8
+@using ChatAppNET8.Client.Services
 
 <h3>Chat</h3>
 
@@ -30,12 +31,16 @@ else
     private List<string> messages = new List<string>();
     private string userInput;
     private string messageInput;
+    public string? ConnectionID;
 
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
         .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
         .Build();
+
+        await SignalRService.StartChatHubConnectionAsync("http://localhost:5275/chathub");
+        Console.WriteLine("Chat connection initialized.");
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {

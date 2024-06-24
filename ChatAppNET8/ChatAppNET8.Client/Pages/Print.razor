@@ -1,0 +1,121 @@
+﻿@page "/print"
+@inject NavigationManager NavigationManager
+@inject ChatAppNET8.Client.Services.SignalRService SignalRService
+@rendermode InteractiveWebAssembly
+
+<h1>Printing Example</h1>
+
+<div>
+    <label>Printer IP:</label>
+    <input @bind="printerIp" />
+</div>
+<div>
+    <label>Document Path:</label>
+    <input @bind="documentPath" />
+</div>
+<button @onclick="PrintDocument">Print Document</button>
+
+<p>@printStatus</p>
+
+@if (!string.IsNullOrEmpty(errorMsg))
+{
+    <p style="color: red;">@errorMsg</p>
+}
+
+@code {
+    private string printStatus = "";
+    private string errorMsg = "";
+    private string printerIp = "10.5.5.5";
+    private string documentPath = "/test/test.txt"; 
+    private string filePath = "/test/test.txt"; // this value is being passed and modified
+    private string fileContent = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync("/test/test.txt");
+                if (response.IsSuccessStatusCode)
+                {
+                    fileContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Contents say: {fileContent}");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to fetch: {response.StatusCode}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle errors
+            Console.WriteLine($"Error fetching file: {ex.Message}");
+        }
+
+        await SignalRService.StartPrintHubConnectionAsync("http://localhost:5275/printhub");
+        Console.WriteLine("SignalR connection initialized.");
+
+        await SignalRService.StartChatHubConnectionAsync("http://localhost:5275/chathub");
+        Console.WriteLine("SignalR connection initialized x2.");
+
+        SignalRService.OnPrintCompleted += (message) =>
+        {
+            printStatus = message;
+            errorMsg = "";
+            StateHasChanged();
+            Console.WriteLine($"Print completed with message: {message}");
+        };
+    }
+
+    private async Task PrintDocument()
+    {
+
+        try
+        {
+            Console.WriteLine($"Attempting to print document. Printer IP: {printerIp}, Document Path: {documentPath}");
+
+            await FetchFileContent(filePath);//trying to stop overwriting of val
+
+            await SignalRService.PrintDocumentAsync(printerIp, filePath);
+            Console.WriteLine($"Check 2 --- Document Path: {documentPath}");
+
+        }
+        catch (Exception ex)
+        {
+            printStatus = $"Error: {ex.Message}";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task FetchFileContent(string path)
+    {
+        try
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync(path);
+                if (response.IsSuccessStatusCode)
+                {
+                    fileContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"File content: {fileContent}");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to fetch file: {response.StatusCode}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching file: {ex.Message}");
+        }
+    }
+
+    public async void Dispose()
+    {
+        await SignalRService.StopConnectionAsync();
+    }
+}

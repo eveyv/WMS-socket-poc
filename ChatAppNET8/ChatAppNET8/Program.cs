@@ -1,4 +1,5 @@
 using ChatAppNET8.Client.Pages;
+using ChatAppNET8.Client.Services;
 using ChatAppNET8.Components;
 using ChatAppNET8.Hubs;
 
@@ -9,6 +10,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddSignalR();
+builder.Services.AddScoped<SignalRService>(); //remove if not needed
+
 
 var app = builder.Build();
 
@@ -30,6 +33,8 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<PrintHub>("/printhub");
+
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
